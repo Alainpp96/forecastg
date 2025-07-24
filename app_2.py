@@ -65,14 +65,15 @@ if "need_to_buy_MW" in df.columns:
         },
     ]
 
-# Costruiamo le colonne della tabella sostituendo 'Giorno' con 'Giorno_str'
+# Costruisci le colonne mettendo prima 'Giorno_str' come "Giorno"
 columns = []
+
+if "Giorno_str" in df.columns:
+    columns.append({"name": "Giorno", "id": "Giorno_str"})
+
 for col in df.columns:
-    if col == "colore_barra":
-        continue  # saltiamo questa colonna tecnica
-    if col == "Giorno":
-        # usiamo la versione stringa formattata
-        columns.append({"name": "Giorno", "id": "Giorno_str"})
+    if col in ["colore_barra", "Giorno", "Giorno_str"]:
+        continue  # escludi colonne tecniche e quella già aggiunta
     elif df[col].dtype.kind in "fc":
         columns.append({"name": col, "id": col, "type": "numeric", "format": format_2_dec})
     else:
@@ -111,6 +112,5 @@ app.layout = html.Div(
         ]),
     ],
 )
-
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=8080)
