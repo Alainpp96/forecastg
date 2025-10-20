@@ -18,21 +18,21 @@ df = df.sort_values(by="Giorno") if "Giorno" in df.columns else df
 if "Giorno" in df.columns:
     df["Giorno_str"] = df["Giorno"].dt.strftime("%d-%m-%Y")
 
-# Colore barre e condizione su 'need_to_buy_MW'
-if "need_to_buy_MW" in df.columns:
-    df["colore_barra"] = df["need_to_buy_MW"].apply(lambda x: "#990000" if x >= 0 else "#228B22")
+# Colore barre e condizione su 'need_to_buy'
+if "need_to_buy" in df.columns:
+    df["colore_barra"] = df["need_to_buy"].apply(lambda x: "#990000" if x >= 0 else "#228B22")
 
 # Crea grafico con asse x 'Giorno'
 fig = None
-if "need_to_buy_MW" in df.columns and "Giorno" in df.columns:
+if "need_to_buy" in df.columns and "Giorno" in df.columns:
     fig = px.bar(
         df,
         x="Giorno",
-        y="need_to_buy_MW",
+        y="need_to_buy",
         color="colore_barra",
         color_discrete_map="identity",
         title="Andamento Need to Buy (MW)",
-        labels={"need_to_buy_MW": "Need to Buy (MW)", "Giorno": "Giorno"},
+        labels={"need_to_buy": "Need to Buy (MW)", "Giorno": "Giorno"},
         template="simple_white",
         height=400,
     )
@@ -47,18 +47,18 @@ if "need_to_buy_MW" in df.columns and "Giorno" in df.columns:
 # Formattazione numerica per colonne numeriche
 format_2_dec = Format.Format(precision=2, scheme="f")
 
-# Condizioni colore nella tabella per 'need_to_buy_MW'
+# Condizioni colore nella tabella per 'need_to_buy'
 style_data_conditional = []
-if "need_to_buy_MW" in df.columns:
+if "need_to_buy" in df.columns:
     style_data_conditional = [
         {
-            "if": {"filter_query": "{need_to_buy_MW} < 0", "column_id": "need_to_buy_MW"},
+            "if": {"filter_query": "{need_to_buy} < 0", "column_id": "need_to_buy"},
             "backgroundColor": "#d4fcd4",
             "color": "#006400",
             "fontWeight": "bold",
         },
         {
-            "if": {"filter_query": "{need_to_buy_MW} >= 0", "column_id": "need_to_buy_MW"},
+            "if": {"filter_query": "{need_to_buy} >= 0", "column_id": "need_to_buy"},
             "backgroundColor": "#ffdddd",
             "color": "#990000",
             "fontWeight": "bold",
@@ -87,7 +87,7 @@ app.layout = html.Div(
     children=[
         html.H1("Need to Buy Dashboard", style={"textAlign": "center", "color": "#333"}),
 
-        html.Div(dcc.Graph(figure=fig) if fig else html.Div("Colonna 'need_to_buy_MW' o 'Giorno' non trovata."), style={"marginBottom": "40px"}),
+        html.Div(dcc.Graph(figure=fig) if fig else html.Div("Colonna 'need_to_buy' o 'Giorno' non trovata."), style={"marginBottom": "40px"}),
 
         html.Div([
             html.H2("NEED TO BUY", style={"textAlign": "center", "color": "#444", "marginBottom": "20px"}),
@@ -112,5 +112,8 @@ app.layout = html.Div(
         ]),
     ],
 )
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=8080)
+
+
